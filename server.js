@@ -2,6 +2,7 @@ require('./db');
 const express = require('express');
 const server = express();
 const cors = require('cors');
+const env = require('dotenv').config();
 
 
 
@@ -26,8 +27,7 @@ server.use(cors(corsOptions));
 const restaurantController = require('./controllers/restaurantController');
 server.use('/api/v1/restaurantsga', restaurantController);
 
-
-const PORT = 9000
+const PORT = process.env.PORT || 9000
 
 server.listen(PORT, () => {
 	const date = new Date(Date.now())

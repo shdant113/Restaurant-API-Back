@@ -1,29 +1,43 @@
 const express = require('express')
 const router = express.Router();
 const Restaurant = require('../models/restaurant')
+const fetch = require('node-fetch')
+
+const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=${process.env.API}`
 
 // show all
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
+	console.log("hittingsdfasdfsdf")
 	try {
-		const getRestaurants = await Restaurant.find();
-		// response json
+		const getRestaurants = await fetch(url);
+		const response = await getRestaurants.json();
+		// console.log(response)
+		// fetch(url)
+		// 	.then((response) => {
+		// 		response.json().then((data) => {
+		// 			console.log(data)
+		// 		})
+		// 	})
 		res.json({
 			status: 200,
-			data: getRestaurants
+			data: response
 		})
+		// console.log(getRestaurants)
 	} catch (err) {
-		res.send(err)
+		console.log("there was an error")
+		next(err)
 	}
 });
 
 // create new
 router.post('/', async (req, res) => {
 	try {
-		const createRestaurant = await Restaurant.create(req.body);
+		const createRestaurant = Restaurant.create(req.body)
 		res.json({
 			status: 200,
 			data: createRestaurant
 		})
+		console.log(createRestaurant)
 	} catch (err) {
 		res.send(err)
 	}
