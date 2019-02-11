@@ -7,7 +7,7 @@ const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=re
 
 // show all
 router.get('/', async (req, res, next) => {
-	console.log("hittingsdfasdfsdf")
+	// console.log("hittingsdfasdfsdf")
 	try {
 		const getRestaurants = await fetch(url);
 		const response = await getRestaurants.json();
