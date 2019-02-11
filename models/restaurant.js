@@ -7,5 +7,4 @@ const restaurantSchema = new Schema({
 	state: String
 })
 
-mongoose.model('Restaurant', restaurantSchema);
-module.exports = Restaurant;
+module.exports = mongoose.model('Restaurant', restaurantSchema);
