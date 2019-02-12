@@ -3,10 +3,8 @@ const express = require('express');
 const server = express();
 const cors = require('cors');
 const env = require('dotenv').config();
-
-
-
-
+const bcrypt = require('bcryptjs');
+const session = require('express-session');
 
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
@@ -25,7 +23,9 @@ const corsOptions = {
 server.use(cors(corsOptions));
 
 const restaurantController = require('./controllers/restaurantController');
+const authController = require('./controllers/authController');
 server.use('/api/v1/restaurantsga', restaurantController);
+server.use('/auth', authController);
 
 const PORT = process.env.PORT || 9000
 
