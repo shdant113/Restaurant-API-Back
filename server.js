@@ -9,6 +9,11 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
+server.use(session({
+	secret: process.env.secret,
+	resave: false,
+	saveUnitialized: false
+}))
 server.use(express.static('public'));
 server.use(methodOverride('_method'));
 server.use(bodyParser.urlencoded({extended: false}));
