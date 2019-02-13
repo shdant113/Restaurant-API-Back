@@ -6,6 +6,7 @@ const User = require('../models/user');
 const fetch = require('node-fetch');
 const router = express.Router();
 
+
 const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=${process.env.API}`
 
 // show all
@@ -25,6 +26,40 @@ router.get('/', async (req, res, next) => {
 			status: 200,
 			data: response
 		})
+		// console.log(getRestaurants)
+	} catch (err) {
+		console.log("there was an error")
+		next(err)
+	}
+});
+
+// city search
+router.post('/city', async (req, res, next) => {
+	console.log('changing the city')
+	console.log(req.body)
+	// console.log(req.query)
+	// const stringCity = JSON.stringify(city)
+	// console.log(stringCity)
+	try {
+		const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${req.body}&key=${process.env.API}`
+		console.log(url)
+		const getRestaurants = await fetch(url);
+		console.log('\n this happened')
+		console.log(getRestaurants)
+		const response = await getRestaurants.json();
+		console.log('\n this also happened')
+		console.log(response)
+		// console.log(response)
+		// fetch(url)
+		// 	.then((response) => {
+		// 		response.json().then((data) => {
+		// 			console.log(data)
+		// 		})
+		// 	})
+		// res.json({
+		// 	status: 200,
+		// 	data: response
+		// })
 		// console.log(getRestaurants)
 	} catch (err) {
 		console.log("there was an error")
@@ -57,13 +92,13 @@ router.post('/save', async (req, res, next) => {
 });
 
 // return saved restaurants
-router.get('/returnsaved', async (req, res, next) => {
+router.get('/getsaved', async (req, res, next) => {
 	console.log('hitting the return saved route')
 	try {
 		const findUser = await User.findOne({ username: req.session.username });
-		console.log("\nfindUser")
-		console.log(findUser)
-		console.log('found a user')
+		// console.log("\nfindUser")
+		// console.log(findUser)
+		// console.log('found a user')
 		// const findSaved = await findUser.savedRestaurants.find({});
 		// console.log('found users saved restaurants')
 		res.json({
@@ -78,12 +113,12 @@ router.get('/returnsaved', async (req, res, next) => {
 // create new
 router.post('/', async (req, res) => {
 	try {
-		const createRestaurant = Restaurant.create(req.body)
+		const findUser = await User.findOne({ username: req.session.username })
+		const createRestaurant = await Restaurant.create(req.body)
 		res.json({
 			status: 200,
 			data: createRestaurant
 		})
-		console.log(createRestaurant)
 	} catch (err) {
 		res.send(err)
 	}
