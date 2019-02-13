@@ -1,9 +1,10 @@
-const express = require('express')
-const router = express.Router();
+const express = require('express');
+const mongoose = require('mongoose');
 const Restaurant = require('../models/restaurant');
 const session = require('express-session');
 const User = require('../models/user');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const router = express.Router();
 
 const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=${process.env.API}`
 
@@ -36,18 +37,37 @@ router.post('/save', async (req, res, next) => {
 	console.log('hitting the save route')
 	try {
 		const findUser = await User.findOne({ username: req.session.username });
-		console.log(req.session)
-		console.log(findUser + ' this is the user')
+		// console.log(findUser)
+		// console.log(req.session)
+		// console.log(findUser + ' this is the user')
 		const restaurantEntry = {}
 		restaurantEntry.name = req.body.name;
 		restaurantEntry.formatted_address = req.body.formatted_address;
-		console.log(restaurantEntry + ' this is the restaurant')
+		// console.log(restaurantEntry + ' this is the restaurant')
 		const saveEntry = await Restaurant.create(restaurantEntry)
 		findUser.savedRestaurants.push(saveEntry);
 		await findUser.save();
-		console.log('successfully saved db')
-		console.log(`these are ${findUser}'s saved restaurants:`)
-		console.log(findUser.savedRestaurants)
+		// console.log('successfully saved db')
+		// console.log(`these are ${findUser}'s saved restaurants:`)
+		console.log("\n here is findUser")
+		console.log(findUser)
+	} catch (err) {
+		next(err)
+	}
+});
+
+// return saved restaurants
+router.get('/returnsaved', async (req, res, next) => {
+	console.log('hitting the return saved route')
+	try {
+		const findUser = await User.findOne({ username: req.session.username });
+		console.log('found a user')
+		// const findSaved = await findUser.savedRestaurants.find({});
+		console.log('found users saved restaurants')
+		res.json({
+			status: 200,
+			data: findUser
+		})
 	} catch (err) {
 		next(err)
 	}

@@ -9,27 +9,35 @@ const session = require('express-session')
 router.post('/login', async (req, res, next) => {
 	try {
 		const currentUser = await User.findOne({ username: req.body.username });
-		console.log('found current user')
-		if (bcrypt.compareSync(req.body.password, currentUser.password)) {
-			console.log('bcrypt')
-			req.session._id = currentUser._id;
-			req.session.username = currentUser.username;
-			// req.session.password = currentUser.password;
-			req.session.logged = true;
-			console.log('passwords match')
-			res.json({
-				status: 200,
-				data: 'login information is correct'
-			})
-		} else {
-			console.log('passwords dont match')
+		if (currentUser === null) {
 			res.json({
 				status: 404,
 				data: 'login information is not correct'
 			})
+		} else {
+			if (bcrypt.compareSync(req.body.password, currentUser.password)) {
+				// console.log('bcrypt')
+				req.session._id = currentUser._id;
+				req.session.username = currentUser.username;
+				// req.session.password = currentUser.password;
+				req.session.logged = true;
+				// console.log('passwords match')
+				res.json({
+					status: 200,
+					data: 'login information is correct'
+				})
+			} else {
+				// console.log('passwords dont match')
+				res.json({
+					status: 404,
+					data: 'login information is not correct'
+				})
+			}
+			// console.log('compared passwords')
+			console.log(currentUser.username + ' is currentUser')
+			console.log(req.session)
 		}
-		console.log('compared passwords')
-		console.log(currentUser + 'this is currentUser')
+		
 	} catch (err) {
 		next(err)
 	}

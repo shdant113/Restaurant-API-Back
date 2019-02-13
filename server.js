@@ -12,7 +12,10 @@ const methodOverride = require('method-override');
 server.use(session({
 	secret: process.env.secret,
 	resave: false,
-	saveUnitialized: false
+	saveUnitialized: false,
+	cookie: { 
+		maxAge: 1000*60*60*24*30 // 30 days
+	}
 }))
 server.use(express.static('public'));
 server.use(methodOverride('_method'));
