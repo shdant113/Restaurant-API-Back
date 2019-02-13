@@ -8,14 +8,19 @@ const session = require('express-session')
 // log in 
 router.post('/login', async (req, res, next) => {
 	try {
-		const findUser = await User.findById(req.params.id);
-		console.log(findUser + ' this is findUser')
 		const currentUser = await User.findOne({ username: req.body.username });
+		console.log('found current user')
 		if (bcrypt.compareSync(req.body.password, currentUser.password)) {
+			console.log('bcrypt')
 			req.session._id = currentUser._id;
 			req.session.username = currentUser.username;
+			// req.session.password = currentUser.password;
 			req.session.logged = true;
+			console.log('passwords match')
+		} else {
+			console.log('passwords dont match')
 		}
+		console.log('compared passwords')
 		console.log(currentUser + 'this is currentUser')
 		res.json({
 			status: 200,
@@ -27,7 +32,7 @@ router.post('/login', async (req, res, next) => {
 });
 
 // register
-router.post('/register', async (req, res) => {
+router.post('/register', async (req, res, next) => {
 	console.log('were running code')
 	const hashPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
 	console.log('we got to has the password')
@@ -40,10 +45,11 @@ router.post('/register', async (req, res) => {
 	try {
 		console.log('were in the try block')
 		const user = await User.create(userDbEntry);
-		console.log(user)
+		console.log(user + ' this is user')
 		req.session.logged = true;
 		req.session.username = user.username;
-		console.log(req.session)
+		req.session.password = user.password;
+		console.log(req.session + ' this is req.session')
 		res.json({
 			status: 200,
 			data: {
@@ -54,7 +60,7 @@ router.post('/register', async (req, res) => {
 	} catch(err){
 		console.log('back end error')
 		console.log(err);
-		res.send(err);
+		next(err);
 	}
 });
 

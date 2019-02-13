@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router();
-const Restaurant = require('../models/restaurant')
+const Restaurant = require('../models/restaurant');
+const session = require('express-session');
+const User = require('../models/user');
 const fetch = require('node-fetch')
 
 const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=${process.env.API}`
@@ -25,6 +27,28 @@ router.get('/', async (req, res, next) => {
 		// console.log(getRestaurants)
 	} catch (err) {
 		console.log("there was an error")
+		next(err)
+	}
+});
+
+// save restaurant
+router.post('/save', async (req, res, next) => {
+	console.log('hitting the save route')
+	try {
+		const findUser = await User.findOne({ username: req.session.username });
+		console.log(req.session)
+		console.log(findUser + ' this is the user')
+		const restaurantEntry = {}
+		restaurantEntry.name = req.body.name;
+		restaurantEntry.formatted_address = req.body.formatted_address;
+		console.log(restaurantEntry + ' this is the restaurant')
+		const saveEntry = await Restaurant.create(restaurantEntry)
+		findUser.savedRestaurants.push(saveEntry);
+		await findUser.save();
+		console.log('successfully saved db')
+		console.log(`these are ${findUser}'s saved restaurants:`)
+		console.log(findUser.savedRestaurants)
+	} catch (err) {
 		next(err)
 	}
 });
