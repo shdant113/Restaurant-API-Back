@@ -17,15 +17,19 @@ router.post('/login', async (req, res, next) => {
 			// req.session.password = currentUser.password;
 			req.session.logged = true;
 			console.log('passwords match')
+			res.json({
+				status: 200,
+				data: 'login information is correct'
+			})
 		} else {
 			console.log('passwords dont match')
+			res.json({
+				status: 404,
+				data: 'login information is not correct'
+			})
 		}
 		console.log('compared passwords')
 		console.log(currentUser + 'this is currentUser')
-		res.json({
-			status: 200,
-			data: 'login information is correct'
-		})
 	} catch (err) {
 		next(err)
 	}
