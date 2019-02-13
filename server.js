@@ -14,6 +14,7 @@ server.use(session({
 	resave: false,
 	saveUnitialized: false,
 	cookie: { 
+		secure: false,
 		maxAge: 1000*60*60*24*30 // 30 days
 	}
 }))
@@ -33,7 +34,7 @@ server.use(cors(corsOptions));
 const restaurantController = require('./controllers/restaurantController');
 const authController = require('./controllers/authController');
 server.use('/api/v1/restaurantsga', restaurantController);
-server.use('/auth', authController);
+server.use('/api/v1/auth', authController);
 
 const PORT = process.env.PORT || 9000
 

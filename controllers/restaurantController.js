@@ -61,12 +61,14 @@ router.get('/returnsaved', async (req, res, next) => {
 	console.log('hitting the return saved route')
 	try {
 		const findUser = await User.findOne({ username: req.session.username });
+		console.log("\nfindUser")
+		console.log(findUser)
 		console.log('found a user')
 		// const findSaved = await findUser.savedRestaurants.find({});
-		console.log('found users saved restaurants')
+		// console.log('found users saved restaurants')
 		res.json({
 			status: 200,
-			data: findUser
+			data: findUser.savedRestaurants
 		})
 	} catch (err) {
 		next(err)
