@@ -1,14 +1,17 @@
+// database
 require('./db');
+
+// modules
 const express = require('express');
 const server = express();
 const cors = require('cors');
 const env = require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
-
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
+// middleware
 server.use(session({
 	secret: process.env.SECRET,
 	resave: false,
@@ -31,6 +34,7 @@ const corsOptions = {
 
 server.use(cors(corsOptions));
 
+// controllers
 const restaurantController = require('./controllers/restaurantController');
 const authController = require('./controllers/authController');
 server.use('/api/v1/restaurantsga', restaurantController);

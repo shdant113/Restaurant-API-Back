@@ -9,59 +9,54 @@ const session = require('express-session')
 router.post('/login', async (req, res, next) => {
 	try {
 		const currentUser = await User.findOne({ username: req.body.username });
+		// if the current user does not exist, user either has not registered or
+		// mistyped username --> send them error
 		if (currentUser === null) {
 			res.json({
 				status: 404,
 				data: 'login information is not correct'
 			})
+		// compare passwords with bcrypt
 		} else {
 			if (bcrypt.compareSync(req.body.password, currentUser.password)) {
-				// console.log('bcrypt')
 				req.session._id = currentUser._id;
 				req.session.username = currentUser.username;
-				// req.session.password = currentUser.password;
 				req.session.logged = true;
-				// console.log('passwords match')
+				// successful log in
 				res.json({
 					status: 200,
 					data: 'login information is correct'
 				})
 			} else {
-				// console.log('passwords dont match')
+				// retry login
 				res.json({
 					status: 404,
 					data: 'login information is not correct'
 				})
 			}
-			// console.log('compared passwords')
-			console.log(currentUser.username + ' is currentUser')
-			console.log(req.session)
 		}
-		
 	} catch (err) {
+		console.log(err)
 		next(err)
 	}
 });
 
 // register
 router.post('/register', async (req, res, next) => {
-	console.log('were running code')
+	// set up bcrypt hashing
 	const hashPassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-	console.log('we got to has the password')
+	// enter form data into db
 	const userDbEntry = {};
-	console.log('we are starting a db entry')
 	userDbEntry.username = req.body.username;
-	console.log('username is entered')
 	userDbEntry.password = hashPassword;
-	console.log('password is entered')
 	try {
-		console.log('were in the try block')
 		const user = await User.create(userDbEntry);
-		console.log(user + ' this is user')
+		// set user credentials for the session --> newly registered user
+		// does not need to log in
 		req.session.logged = true;
 		req.session.username = user.username;
 		req.session.password = user.password;
-		console.log(req.session + ' this is req.session')
+		// successful registration --> username must be unique
 		res.json({
 			status: 200,
 			data: {
@@ -70,7 +65,6 @@ router.post('/register', async (req, res, next) => {
 			}
 		});
 	} catch(err){
-		console.log('back end error')
 		console.log(err);
 		next(err);
 	}

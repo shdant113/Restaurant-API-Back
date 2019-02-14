@@ -6,169 +6,150 @@ const User = require('../models/user');
 const fetch = require('node-fetch');
 const router = express.Router();
 
-
-// city search
+// post route for city the user searched
 router.post('/city', async (req, res, next) => {
 	try {
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username })
+		// req.body.city added within url
 		const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${req.body.city}&key=${process.env.API}`
-		// console.log(url)
+		// fetch call for data from google maps api
 		const getRestaurants = await fetch(url);
-		console.log('\n this happened')
-		// console.log(getRestaurants)
+		// parse into json
 		const response = await getRestaurants.json();
-		console.log('\n this also happened')
-		console.log(response)
+		// response to client
 		res.json({
 			status: 200,
 			data: response
 		})
-		console.log('sent the response')
-		// console.log(getRestaurants)
 	} catch (err) {
-		console.log("there was an error")
+		console.log(err)
 		next(err)
 	}
 });
 
-// save restaurant
+// post route for the user to save selected restaurants
 router.post('/save', async (req, res, next) => {
-	console.log('hitting the save route')
 	try {
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
-		// console.log(findUser)
-		// console.log(req.session)
-		// console.log(findUser + ' this is the user')
+		// enter selected restaurant into db --> saved under user's saved collection
 		const restaurantEntry = {}
 		restaurantEntry.name = req.body.name;
 		restaurantEntry.formatted_address = req.body.formatted_address;
-		// console.log(restaurantEntry + ' this is the restaurant')
+		// create entry
 		const saveEntry = await Restaurant.create(restaurantEntry)
 		findUser.savedRestaurants.push(saveEntry);
+		// save db
 		await findUser.save();
-		// console.log('successfully saved db')
-		// console.log(`these are ${findUser}'s saved restaurants:`)
-		console.log("\n here is findUser")
-		console.log(findUser)
 	} catch (err) {
+		console.log(err)
 		next(err)
 	}
 });
 
-// return saved restaurants
+// return saved restaurants on profile
 router.get('/getsaved', async (req, res, next) => {
 	console.log('hitting the return saved route')
 	try {
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
-		// console.log("\nfindUser")
-		// console.log(findUser)
-		// console.log('found a user')
-		// const findSaved = await findUser.savedRestaurants.find({});
-		// console.log('found users saved restaurants')
+		// return user's saved collection to client
 		res.json({
 			status: 200,
 			data: findUser.savedRestaurants
 		})
 	} catch (err) {
+		console.log(err)
 		next(err)
 	}
 });
 
-// create new
-router.post('/', async (req, res) => {
+// create new restaurant --> add ONLY to saved restaurants
+router.post('/', async (req, res, next) => {
 	try {
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
+		// set up db entry
 		const restaurantEntry = {};
 		restaurantEntry.name = req.body.name;
 		restaurantEntry.formatted_address = req.body.formatted_address;
+		// create db entry
 		const createRestaurant = await Restaurant.create(req.body);
+		// push new restaurant to saved
 		findUser.savedRestaurants.push(createRestaurant);
+		// save db
 		await findUser.save();
+		// respond to client to print
 		res.json({
 			status: 200,
 			data: createRestaurant
 		})
 	} catch (err) {
-		res.send(err)
+		console.log(err)
+		next(err)
 	}
 });
 
-// edit one
-router.get('/:id', async (req, res) => {
-	console.log('hitting edit route')
+// edit a saved restaurant
+router.get('/:id', async (req, res, next) => {
 	try {
+		// find user
 		const findUser = await User.findOne({ username: req.session.username })
+		// find restaurant to edit
 		const findRestaurant = await Restaurant.findById(req.params.id);
 		res.json({
 			status: 200,
 			data: findRestaurant
 		})
 	} catch (err) {
-		res.send(err)
+		console.log(err)
+		next(err)
 	}
 });
 
-// update one
-router.put('/:id', async (req, res) => {
-	console.log(req.body)
-	console.log('hitting update route')
+// update a saved restaurant
+router.put('/:id', async (req, res, next) => {
 	try {
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
-		console.log('\nfound user')
-		console.log(findUser)
-		console.log('\nreq.params.id is:')
-		console.log(req.params.id)
-		console.log('\nreq.body is:')
-		console.log(req.body)
-
+		// populate restaurant to update with new body
 		const updateRestaurant = await Restaurant.findByIdAndUpdate(
 			req.params.id,
 			req.body,
 			{ new: true }
 		);
-		// findUser.savedRestaurants.id(req.params.id).remove();
-		// await findUser.save();
-		// console.log('removed old')
-		// const newRestaurant = await Restaurant.findOne({ name: req.body.name });
-		// findUser.savedRestaurants.push(newRestaurant);
-		// await findUser.save();
-		// console.log('added new')
-		console.log('went through update')
-		console.log('\nupdated restaurant is:')
-		console.log(updateRestaurant)
-		// console.log('saved user')
-		// findUser.savedRestaurants.id(req.params.id).remove();
-		// await findUser.save();
-		// findUser.savedRestaurants.push(updateRestaurant);
-		// await findUser.save();
+		// return new restaurant to client
 		res.json({
 			status: 200,
 			data: updateRestaurant
 		})
-		console.log('sent back new data')
 	} catch (err) {
-		res.send(err)
+		console.log(err)
+		next(err)
 	}
 });
 
-// delete one
-router.delete('/:id', async (req, res) => {
+// delete a saved restaurant
+router.delete('/:id', async (req, res, next) => {
 	try {
-		console.log('hitting route')
+		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
+		// find restaurant to delete
 		const deleteRestaurant = await Restaurant.findByIdAndRemove(req.params.id);
+		// remove it from database
 		findUser.savedRestaurants.id(req.params.id).remove();
+		// save user collection
 		await findUser.save();
+		// send data back to client after removing restaurant
 		res.json({
 			status: 200,
 			data: deleteRestaurant
 		})
-		console.log('went through route')
 	} catch (err) {
-		res.send(err)
+		console.log(err)
+		next(err)
 	}
 });
-
-
 
 module.exports = router;
