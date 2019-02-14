@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
 server.use(session({
-	secret: process.env.secret,
+	secret: process.env.SECRET,
 	resave: false,
 	saveUnitialized: false,
 	cookie: { 
@@ -24,7 +24,7 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: false}));
 
 const corsOptions = {
-	origin: 'https://le-restauranteur.herokuapp.com',
+	origin: process.env.PATH,
 	credentials: true,
 	optionsSuccessStatus: 200
 }
