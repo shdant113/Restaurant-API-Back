@@ -24,7 +24,8 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: false}));
 
 const corsOptions = {
-	origin: 'https://le-restauranteur-back.herokuapp.com' || 'http://localhost:3000',
+	origin: 'https://le-restauranteur-back.herokuapp.com' ||
+	'https://le-restauranteur.herokuapp.com' || 'http://localhost:3000',
 	credentials: true,
 	optionsSuccessStatus: 200
 }
