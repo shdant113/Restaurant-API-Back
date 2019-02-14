@@ -7,8 +7,6 @@ const fetch = require('node-fetch');
 const router = express.Router();
 
 
-const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Chicago&key=${process.env.API}`
-
 // show all
 router.get('/', async (req, res, next) => {
 	// console.log("hittingsdfasdfsdf")
@@ -35,31 +33,23 @@ router.get('/', async (req, res, next) => {
 
 // city search
 router.post('/city', async (req, res, next) => {
-	console.log('changing the city')
-	console.log(req.body)
-	// console.log(req.query)
-	// const stringCity = JSON.stringify(city)
-	// console.log(stringCity)
+	// console.log('\nchanging the city, here is req.body')
+		// console.log(req.body)
 	try {
-		const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${req.body}&key=${process.env.API}`
-		console.log(url)
+		const findUser = await User.findOne({ username: req.session.username })
+		const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${req.body.city}&key=${process.env.API}`
+		// console.log(url)
 		const getRestaurants = await fetch(url);
 		console.log('\n this happened')
-		console.log(getRestaurants)
+		// console.log(getRestaurants)
 		const response = await getRestaurants.json();
 		console.log('\n this also happened')
 		console.log(response)
-		// console.log(response)
-		// fetch(url)
-		// 	.then((response) => {
-		// 		response.json().then((data) => {
-		// 			console.log(data)
-		// 		})
-		// 	})
-		// res.json({
-		// 	status: 200,
-		// 	data: response
-		// })
+		res.json({
+			status: 200,
+			data: response
+		})
+		console.log('sent the response')
 		// console.log(getRestaurants)
 	} catch (err) {
 		console.log("there was an error")
