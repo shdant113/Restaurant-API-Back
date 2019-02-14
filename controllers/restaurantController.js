@@ -7,34 +7,8 @@ const fetch = require('node-fetch');
 const router = express.Router();
 
 
-// show all
-router.get('/', async (req, res, next) => {
-	// console.log("hittingsdfasdfsdf")
-	try {
-		const getRestaurants = await fetch(url);
-		const response = await getRestaurants.json();
-		// console.log(response)
-		// fetch(url)
-		// 	.then((response) => {
-		// 		response.json().then((data) => {
-		// 			console.log(data)
-		// 		})
-		// 	})
-		res.json({
-			status: 200,
-			data: response
-		})
-		// console.log(getRestaurants)
-	} catch (err) {
-		console.log("there was an error")
-		next(err)
-	}
-});
-
 // city search
 router.post('/city', async (req, res, next) => {
-	// console.log('\nchanging the city, here is req.body')
-		// console.log(req.body)
 	try {
 		const findUser = await User.findOne({ username: req.session.username })
 		const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+${req.body.city}&key=${process.env.API}`
