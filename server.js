@@ -21,10 +21,10 @@ server.use(session({
 server.use(express.static('public'));
 server.use(methodOverride('_method'));
 server.use(bodyParser.json());
-// server.use(bodyParser.urlencoded({extended: false}));
+server.use(bodyParser.urlencoded({extended: false}));
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: 'https://le-restauranteur.herokuapp.com/' || 'http://localhost:3000',
 	credentials: true,
 	optionsSuccessStatus: 200
 }
