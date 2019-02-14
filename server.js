@@ -24,7 +24,7 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: false}));
 
 const corsOptions = {
-	origin: process.env.PATH,
+	origin: process.env.CLIENT_APP_URI,
 	credentials: true,
 	optionsSuccessStatus: 200
 }
