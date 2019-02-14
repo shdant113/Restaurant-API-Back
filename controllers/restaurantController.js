@@ -150,12 +150,18 @@ router.put('/:id', async (req, res) => {
 	console.log('hitting update route')
 	try {
 		const findUser = await User.findOne({ username: req.session.username });
-		console.log('found user')
+		console.log('\nfound user')
+		console.log(findUser)
+		console.log('\nreq.params.id is:')
+		console.log(req.params.id)
+		console.log('\nreq.body is:')
+		console.log(req.body)
+
 		const updateRestaurant = await Restaurant.findByIdAndUpdate(
 			req.params.id,
 			req.body,
 			{ new: true }
-			);
+		);
 		// findUser.savedRestaurants.id(req.params.id).remove();
 		// await findUser.save();
 		// console.log('removed old')
@@ -164,6 +170,13 @@ router.put('/:id', async (req, res) => {
 		// await findUser.save();
 		// console.log('added new')
 		console.log('went through update')
+		console.log('\nupdated restaurant is:')
+		console.log(updateRestaurant)
+		// console.log('saved user')
+		// findUser.savedRestaurants.id(req.params.id).remove();
+		// await findUser.save();
+		// findUser.savedRestaurants.push(updateRestaurant);
+		// await findUser.save();
 		res.json({
 			status: 200,
 			data: updateRestaurant
