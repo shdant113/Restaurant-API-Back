@@ -113,8 +113,13 @@ router.get('/getsaved', async (req, res, next) => {
 // create new
 router.post('/', async (req, res) => {
 	try {
-		const findUser = await User.findOne({ username: req.session.username })
-		const createRestaurant = await Restaurant.create(req.body)
+		const findUser = await User.findOne({ username: req.session.username });
+		const restaurantEntry = {};
+		restaurantEntry.name = req.body.name;
+		restaurantEntry.formatted_address = req.body.formatted_address;
+		const createRestaurant = await Restaurant.create(req.body);
+		findUser.savedRestaurants.push(createRestaurant);
+		await findUser.save();
 		res.json({
 			status: 200,
 			data: createRestaurant
@@ -125,8 +130,10 @@ router.post('/', async (req, res) => {
 });
 
 // edit one
-router.get('/:id/edit', async (req, res) => {
+router.get('/:id', async (req, res) => {
+	console.log('hitting edit route')
 	try {
+		const findUser = await User.findOne({ username: req.session.username })
 		const findRestaurant = await Restaurant.findById(req.params.id);
 		res.json({
 			status: 200,
@@ -139,16 +146,29 @@ router.get('/:id/edit', async (req, res) => {
 
 // update one
 router.put('/:id', async (req, res) => {
+	console.log(req.body)
+	console.log('hitting update route')
 	try {
+		const findUser = await User.findOne({ username: req.session.username });
+		console.log('found user')
 		const updateRestaurant = await Restaurant.findByIdAndUpdate(
 			req.params.id,
 			req.body,
 			{ new: true }
 			);
+		// findUser.savedRestaurants.id(req.params.id).remove();
+		// await findUser.save();
+		// console.log('removed old')
+		// const newRestaurant = await Restaurant.findOne({ name: req.body.name });
+		// findUser.savedRestaurants.push(newRestaurant);
+		// await findUser.save();
+		// console.log('added new')
+		console.log('went through update')
 		res.json({
 			status: 200,
 			data: updateRestaurant
 		})
+		console.log('sent back new data')
 	} catch (err) {
 		res.send(err)
 	}
@@ -157,11 +177,16 @@ router.put('/:id', async (req, res) => {
 // delete one
 router.delete('/:id', async (req, res) => {
 	try {
+		console.log('hitting route')
+		const findUser = await User.findOne({ username: req.session.username });
 		const deleteRestaurant = await Restaurant.findByIdAndRemove(req.params.id);
+		findUser.savedRestaurants.id(req.params.id).remove();
+		await findUser.save();
 		res.json({
 			status: 200,
 			data: deleteRestaurant
 		})
+		console.log('went through route')
 	} catch (err) {
 		res.send(err)
 	}
