@@ -50,7 +50,6 @@ router.post('/save', async (req, res, next) => {
 
 // return saved restaurants on profile
 router.get('/getsaved', async (req, res, next) => {
-	console.log('hitting the return saved route')
 	try {
 		// find current user
 		const findUser = await User.findOne({ username: req.session.username });
