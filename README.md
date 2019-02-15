@@ -1,26 +1,13 @@
-# **RESTAURANTS API**
+# **LE RESTAURANTEUR**
 
-## Back End
+## This is the server side v1 API for Le Restauranteur.
 
-#### Endpoints:
+#### Overview
 
-1. Search by city:
-	* /api/v1/search/city?={city}
-	* Display name, address, city, state, etc.
-	* Maybe links to a website or menu?
-2. Search by name:
-	* /api/v1/search/name?={name}
-	* Display name, address, city, state, etc.
-	* Maybe a default option to the nearest location? Would require geolocation.
-3. Pull a random restaurant:
-	* /api/v1/search/city?={city}
-	* Out of the information rendered from the API, the app randomly picks one index to display.
-	* If user presses "I don't like this one" button, the indexed result is removed from the data. The app randomly picks another index and generates the data.
-4. User profiles:
-	* Creating new restaurant adds the inputted information to user's saved restaurants list.
-		* /api/v1/{userID}
-	* Editing and updating a restaurant replaces the old information with the new inputted information on the user's saved restaurants list.
-		* /api/v1/{usedID}/{this.state.toEdit.restaurantID}
-	* Deleting a restaurant removes the restaurant from their saved restaurants list.
-		* /api/v1/{userID}/{restaurantID}
-5. CRUD routes do not affect the information received for each restaurant from the API. They only affect the user-specific information inputted for each restaurant.
+Le Restauranteur is an app built with React by Spencer Dant. Using Le Restauranteur, a user can search their city or town in a simple and user-friendly design. Using this program as its engine, the app efficiently and without complication constructs a data set of local restaurants and eateries in the city or town the user searched and then, at random, presents an option for the user. If the user is not happy with that option, they can easily run their search again with the press of a button, and if they are, they can save that restaurant to their own user profile for future reference when they are looking for a place to go in that city or town again.
+
+#### Using the API
+
+The current version of this API is accessible only by using the built in search feature in Le Restauranteur, which can be found at https://le-restauranteur.herokuapp.com. 
+
+The current version of this API is version 1, deployed in February of 2019. 
